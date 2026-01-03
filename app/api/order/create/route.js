@@ -5,8 +5,10 @@ import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 
+
 export async function POST(request){
     try {
+
         const {userId} = getAuth(request)
         const {address, items} = await request.json();
 
@@ -26,11 +28,12 @@ export async function POST(request){
                 userId,
                 address,
                 items,
-                amount:amount + Math.floor(amount * 0.02),
+                amount: amount + Math.floor(amount * 0.02),
                 date: Date.now()
             }
         })
 
+        //
         const user = await User.findById(userId)
         user.cartItems = {}
         await user.save()
