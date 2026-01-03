@@ -10,7 +10,7 @@ export async function POST(request){
         const {userId} = getAuth(request)
         const {address, items} = await request.json();
 
-        if (!address || items.lenght === 0) {
+        if (!address || items.length === 0) {
             return NextResponse.json({success:false, message:"Invalid Data"})
         }
 
