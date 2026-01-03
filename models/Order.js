@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema({
     userId: {type:String, required: true, ref:'user'},
     items: [{
-        product: { types: String, required:true, ref:'product'},
-        quantity: { types:Number, required:true}
+        product: { type: String, required:true, ref:'product'},
+        quantity: { type:Number, required:true}
     }],
     amount: {type: Number, required:true},
     address: {type: String, ref: 'address', required:true},
