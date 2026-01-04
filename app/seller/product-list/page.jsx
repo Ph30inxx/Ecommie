@@ -41,26 +41,29 @@ const ProductList = () => {
   }, [user])
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 min-h-screen flex flex-col justify-between page-transition">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
-        <h2 className="pb-4 text-lg font-medium">All Product</h2>
-        <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
+        <div className="flex flex-col items-center md:items-start mb-6">
+          <h2 className="text-3xl font-bold text-white">All Products</h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-2 shadow-glow-cyan"></div>
+        </div>
+        <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-xl card-dark">
           <table className=" table-fixed w-full overflow-hidden">
-            <thead className="text-gray-900 text-sm text-left">
+            <thead className="text-slate-200 text-sm text-left bg-gradient-to-r from-slate-800 to-slate-900 border-b-2 border-cyan-500/30">
               <tr>
-                <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">Product</th>
-                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Category</th>
-                <th className="px-4 py-3 font-medium truncate">
+                <th className="w-2/3 md:w-2/5 px-4 py-4 font-semibold truncate">Product</th>
+                <th className="px-4 py-4 font-semibold truncate max-sm:hidden">Category</th>
+                <th className="px-4 py-4 font-semibold truncate">
                   Price
                 </th>
-                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Action</th>
+                <th className="px-4 py-4 font-semibold truncate max-sm:hidden">Action</th>
               </tr>
             </thead>
-            <tbody className="text-sm text-gray-500">
+            <tbody className="text-sm text-slate-400">
               {products.map((product, index) => (
-                <tr key={index} className="border-t border-gray-500/20">
+                <tr key={index} className="border-t border-slate-800 hover:bg-slate-800/50 transition-colors duration-200">
                   <td className="md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 truncate">
-                    <div className="bg-gray-500/10 rounded p-2">
+                    <div className="bg-slate-800 border border-slate-700 rounded p-2">
                       <Image
                         src={product.image[0]}
                         alt="product Image"
@@ -69,14 +72,14 @@ const ProductList = () => {
                         height={720}
                       />
                     </div>
-                    <span className="truncate w-full">
+                    <span className="truncate w-full text-slate-200">
                       {product.name}
                     </span>
                   </td>
                   <td className="px-4 py-3 max-sm:hidden">{product.category}</td>
-                  <td className="px-4 py-3">${product.offerPrice}</td>
+                  <td className="px-4 py-3 text-slate-200">${product.offerPrice}</td>
                   <td className="px-4 py-3 max-sm:hidden">
-                    <button onClick={() => router.push(`/product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
+                    <button onClick={() => router.push(`/product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-md hover:shadow-glow-cyan transition-all duration-300">
                       <span className="hidden md:block">Visit</span>
                       <Image
                         className="h-3.5"

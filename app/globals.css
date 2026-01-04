@@ -12,8 +12,163 @@
       -webkit-appearance: none;
       margin: 0;
     }
+
+    /* Dark theme body defaults */
+    body {
+      @apply bg-slate-950 text-slate-100;
+      background-image: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+    }
+}
+
+/* Custom scrollbar - dark with cyan accents */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply from-cyan-400 to-blue-400;
+}
+
+@layer utilities {
+  /* Page transition */
+  .page-transition {
+    animation: fadeInUp 0.6s ease-out;
   }
 
-::-webkit-scrollbar {
-  display: none;
+  /* Gradient text with neon effect */
+  .gradient-text {
+    @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+  }
+
+  /* Card with glow effect on hover */
+  .card-glow {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-glow:hover {
+    @apply -translate-y-2 shadow-neon-cyan border-cyan-500/50;
+  }
+
+  /* Neon border effect */
+  .neon-border {
+    @apply border border-cyan-500/30;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2), inset 0 0 10px rgba(34, 211, 238, 0.1);
+  }
+
+  .neon-border:hover {
+    @apply border-cyan-400/60;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.2);
+  }
+
+  /* Glass morphism for dark theme */
+  .glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/50;
+  }
+
+  /* Grid background pattern */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Shimmer effect for dark theme */
+  .shimmer-dark {
+    background: linear-gradient(
+      90deg,
+      #1a1a1a 0px,
+      #2a2a2a 40px,
+      #1a1a1a 80px
+    );
+    background-size: 1000px;
+    animation: shimmer 2s infinite linear;
+  }
+
+  /* Floating animation for icons/badges */
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@layer components {
+  /* Dark theme input */
+  .input-dark {
+    @apply outline-none border border-slate-700 bg-slate-900 rounded-lg px-4 py-2.5 text-slate-100;
+    @apply transition-all duration-200;
+    @apply focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20;
+    @apply placeholder:text-slate-500;
+  }
+
+  /* Keep legacy name for backwards compatibility */
+  .input-purple {
+    @apply input-dark;
+  }
+
+  /* Primary button - neon cyan gradient */
+  .btn-primary-dark {
+    @apply px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg;
+    @apply transition-all duration-300 hover:shadow-neon-cyan hover:scale-105;
+    @apply active:scale-95;
+  }
+
+  /* Keep legacy name for backwards compatibility */
+  .btn-primary {
+    @apply btn-primary-dark;
+  }
+
+  /* Secondary button - outline with glow */
+  .btn-secondary-dark {
+    @apply px-6 py-3 bg-transparent text-cyan-400 font-semibold rounded-lg;
+    @apply border-2 border-cyan-500/50;
+    @apply transition-all duration-300 hover:bg-cyan-500/10 hover:shadow-glow-cyan hover:border-cyan-400;
+  }
+
+  /* Keep legacy name for backwards compatibility */
+  .btn-secondary {
+    @apply btn-secondary-dark;
+  }
+
+  /* Ghost button */
+  .btn-ghost-dark {
+    @apply px-6 py-3 text-slate-300 font-medium rounded-lg;
+    @apply transition-all duration-300 hover:bg-slate-800 hover:text-cyan-400;
+  }
+
+  /* Keep legacy name for backwards compatibility */
+  .btn-ghost {
+    @apply btn-ghost-dark;
+  }
+
+  /* Card base - dark elevated */
+  .card-dark {
+    @apply bg-slate-900 rounded-xl border border-slate-800 shadow-dark-lg;
+    @apply transition-all duration-300;
+  }
+
+  .card-dark:hover {
+    @apply border-cyan-500/30 shadow-neon-cyan;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

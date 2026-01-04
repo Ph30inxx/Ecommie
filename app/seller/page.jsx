@@ -53,11 +53,11 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 min-h-screen flex flex-col justify-between page-transition">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
         <div>
-          <p className="text-base font-medium">Product Image</p>
-          <div className="flex flex-wrap items-center gap-3 mt-2">
+          <p className="text-base font-semibold text-slate-700">Product Image</p>
+          <div className="flex flex-wrap items-center gap-3 mt-2 p-6 border-2 border-dashed border-slate-300 hover:border-purple-500 transition-colors duration-300 rounded-xl bg-purple-50/30">
 
             {[...Array(4)].map((_, index) => (
               <label key={index} htmlFor={`image${index}`}>
@@ -80,14 +80,14 @@ const AddProduct = () => {
           </div>
         </div>
         <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium" htmlFor="product-name">
+          <label className="text-base font-semibold text-slate-700" htmlFor="product-name">
             Product Name
           </label>
           <input
             id="product-name"
             type="text"
             placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            className="input-purple"
             onChange={(e) => setName(e.target.value)}
             value={name}
             required
@@ -95,7 +95,7 @@ const AddProduct = () => {
         </div>
         <div className="flex flex-col gap-1 max-w-md">
           <label
-            className="text-base font-medium"
+            className="text-base font-semibold text-slate-700"
             htmlFor="product-description"
           >
             Product Description
@@ -103,7 +103,7 @@ const AddProduct = () => {
           <textarea
             id="product-description"
             rows={4}
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            className="input-purple resize-none"
             placeholder="Type here"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
@@ -112,12 +112,12 @@ const AddProduct = () => {
         </div>
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="category">
+            <label className="text-base font-semibold text-slate-700" htmlFor="category">
               Category
             </label>
             <select
               id="category"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="input-purple"
               onChange={(e) => setCategory(e.target.value)}
               defaultValue={category}
             >
@@ -131,36 +131,36 @@ const AddProduct = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="product-price">
+            <label className="text-base font-semibold text-slate-700" htmlFor="product-price">
               Product Price
             </label>
             <input
               id="product-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="input-purple"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
               required
             />
           </div>
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="offer-price">
+            <label className="text-base font-semibold text-slate-700" htmlFor="offer-price">
               Offer Price
             </label>
             <input
               id="offer-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="input-purple"
               onChange={(e) => setOfferPrice(e.target.value)}
               value={offerPrice}
               required
             />
           </div>
         </div>
-        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+        <button type="submit" className="btn-primary px-8">
+          ADD PRODUCT
         </button>
       </form>
       {/* <Footer /> */}

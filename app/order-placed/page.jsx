@@ -15,12 +15,13 @@ const OrderPlaced = () => {
   }, [])
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-5'>
+    <div className='h-screen flex flex-col justify-center items-center gap-5 bg-gradient-to-br from-slate-900 via-slate-950 to-black grid-bg animate-fade-in'>
       <div className="flex justify-center items-center relative">
-        <Image className="absolute p-5" src={assets.checkmark} alt='' />
-        <div className="animate-spin rounded-full h-24 w-24 border-4 border-t-green-300 border-gray-200"></div>
+        <Image className="absolute p-5 animate-scale-in brightness-200" src={assets.checkmark} alt='' />
+        <div className="animate-spin rounded-full h-24 w-24 border-4 border-t-cyan-500 border-r-blue-400 border-b-cyan-500 border-l-transparent shadow-glow-cyan"></div>
       </div>
-      <div className="text-center text-2xl font-semibold">Order Placed Successfully</div>
+      <div className="text-center text-3xl md:text-4xl font-bold text-white animate-fade-in-up">Order Placed Successfully</div>
+      <p className="text-slate-400 text-center animate-fade-in-up">Redirecting to your orders...</p>
     </div>
   )
 }
