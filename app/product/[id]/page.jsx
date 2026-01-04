@@ -8,13 +8,17 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
+import { useCart } from "@/lib/react-query/hooks/useCart";
 import React from "react";
 
 const Product = () => {
 
     const { id } = useParams();
 
-    const { products, router, addToCart } = useAppContext()
+    const { products, router } = useAppContext()
+
+    // Use React Query hook for cart operations
+    const { addToCart } = useCart();
 
     const [mainImage, setMainImage] = useState(null);
     const [productData, setProductData] = useState(null);

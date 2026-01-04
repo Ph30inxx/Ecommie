@@ -5,10 +5,14 @@ import OrderSummary from "@/components/OrderSummary";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { useAppContext } from "@/context/AppContext";
+import { useCart } from "@/lib/react-query/hooks/useCart";
 
 const Cart = () => {
 
-  const { products, router, cartItems, addToCart, updateCartQuantity, getCartCount } = useAppContext();
+  const { products, router, cartItems, getCartCount } = useAppContext();
+
+  // Use React Query hook for cart operations
+  const { addToCart, updateCartQuantity } = useCart();
 
   return (
     <>

@@ -4,13 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useState } from "react";
-import { useAppContext } from "@/context/AppContext";
-import axios, { Axios } from "axios";
-import toast from "react-hot-toast";
+import { useAddAddress } from "@/lib/react-query/hooks/useAddressMutations";
 
 const AddAddress = () => {
-
-    const {getToken, router} = useAppContext()
 
     const [address, setAddress] = useState({
         fullName: '',
@@ -21,26 +17,12 @@ const AddAddress = () => {
         state: '',
     })
 
+    // Use React Query mutation for adding address
+    const addAddressMutation = useAddAddress();
+
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-
-        try {
-            const token = await getToken()
-
-            const {data} = await axios.post('api/user/add-address', {address}, {headers: {Authorization: `Bearer ${token}`}})
-
-            if(data.success){
-                toast.success(data.message)
-                router.push('/cart')
-            }else {
-                toast.error(data.message)
-            }
-
-        } catch (error) {
-            toast.error(error.message)
-
-        }
-
+        addAddressMutation.mutate(address);
     }
 
     return (
@@ -101,8 +83,8 @@ const AddAddress = () => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="btn-primary max-w-sm w-full mt-6 uppercase shadow-neon-cyan">
-                        Save address
+                    <button type="submit" className="btn-primary max-w-sm w-full mt-6 uppercase shadow-neon-cyan" disabled={addAddressMutation.isPending}>
+                        {addAddressMutation.isPending ? 'SAVING...' : 'SAVE ADDRESS'}
                     </button>
                 </form>
                 <Image

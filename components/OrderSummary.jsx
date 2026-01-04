@@ -1,84 +1,55 @@
-import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useUserAddresses } from "@/lib/react-query/hooks/useUserAddresses";
+import { useCreateOrder } from "@/lib/react-query/hooks/useOrderMutations";
 
 const OrderSummary = () => {
 
-  const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
+  const { currency, router, getCartCount, getCartAmount, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [userAddresses, setUserAddresses] = useState([]);
+  // Use React Query hooks for fetching addresses and creating orders
+  const { data: userAddresses = [] } = useUserAddresses();
+  const createOrderMutation = useCreateOrder();
 
-  const fetchUserAddresses = async () => {
-    try {
-
-      const token = await getToken()
-
-      const {data} = await axios.get('/api/user/get-address', {headers: {Authorization: `Bearer ${token}`}})
-
-      if (data.success) {
-        setUserAddresses(data.addresses)
-        if (data.addresses.length > 0){
-          setSelectedAddress(data.addresses[0])
-        }
-      }else{
-        toast.error(data.message)
-      }
-      
-    } catch (error) {
-      toast.error(error.message)
-
+  // Auto-select first address when loaded
+  useEffect(() => {
+    if (userAddresses.length > 0 && !selectedAddress) {
+      setSelectedAddress(userAddresses[0]);
     }
-  }
+  }, [userAddresses, selectedAddress]);
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
     setIsDropdownOpen(false);
   };
 
-  const createOrder = async () => {
-    try {
-
-      if (!selectedAddress) {
-        return toast.error('Please select an address')
-      }
-
-      let cartItemsArray = Object.keys(cartItems).map((key)=>({product:key, quantity:cartItems[key]}))
-      cartItemsArray = cartItemsArray.filter(item => item.quantity > 0)
-
-      if (cartItemsArray.length === 0) {
-        return toast.error('Cart is Empty')
-      }
-
-      const token = await getToken()
-      const {data} = await axios.post('/api/order/create', {
-        address: selectedAddress._id,
-        items: cartItemsArray
-      },{
-        headers: {Authorization: `Bearer ${token}`}
-      })
-
-      if (data.success) {
-        toast.success(data.message)
-        setCartItems({})
-        router.push('/order-placed')
-      }else{
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      toast.error(error.message)
+  const createOrder = () => {
+    if (!selectedAddress) {
+      return toast.error('Please select an address');
     }
+
+    let cartItemsArray = Object.keys(cartItems).map((key) => ({
+      product: key,
+      quantity: cartItems[key]
+    }));
+    cartItemsArray = cartItemsArray.filter(item => item.quantity > 0);
+
+    if (cartItemsArray.length === 0) {
+      return toast.error('Cart is Empty');
+    }
+
+    createOrderMutation.mutate({
+      address: selectedAddress._id,
+      items: cartItemsArray
+    }, {
+      onSuccess: () => {
+        setCartItems({}); // Clear local cart state
+      }
+    });
   }
-
-  useEffect(() => {
-    if (user) {
-      fetchUserAddresses();
-    }
-  }, [user])
 
   return (
     <div className="w-full md:w-96 card-dark p-8">
@@ -168,8 +139,8 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      <button onClick={createOrder} className="btn-primary w-full shadow-neon-cyan mt-6">
-        Place Order
+      <button onClick={createOrder} className="btn-primary w-full shadow-neon-cyan mt-6" disabled={createOrderMutation.isPending}>
+        {createOrderMutation.isPending ? 'PLACING ORDER...' : 'PLACE ORDER'}
       </button>
     </div>
   );

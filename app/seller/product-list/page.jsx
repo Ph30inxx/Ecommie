@@ -1,44 +1,18 @@
 'use client'
-import React, { useEffect, useState } from "react";
-import { assets, productsDummyData } from "@/assets/assets";
+import React from "react";
+import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useSellerProducts } from "@/lib/react-query/hooks/useSellerProducts";
 
 const ProductList = () => {
 
-  const { router, getToken, user } = useAppContext()
+  const { router } = useAppContext()
 
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  const fetchSellerProduct = async () => {
-    try {
-      
-      const token = await getToken()
-
-      const {data} = await axios.get('/api/product/seller-list', {headers:{Authorization: `Bearer ${token}`}})
-
-      if (data.success) {
-        setProducts(data.products)
-        setLoading(false)
-      }else {
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
-
-  useEffect(() => {
-    if (user) {
-      fetchSellerProduct();
-    }
-  }, [user])
+  // Use React Query hook for fetching seller products
+  const { data: products = [], isLoading: loading } = useSellerProducts();
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between page-transition">

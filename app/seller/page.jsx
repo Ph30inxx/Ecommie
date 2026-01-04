@@ -2,14 +2,10 @@
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
-import { useAppContext } from "@/context/AppContext";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useAddProduct } from "@/lib/react-query/hooks/useProductMutations";
 
 
 const AddProduct = () => {
-
-  const {getToken} = useAppContext()
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
@@ -17,6 +13,9 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Earphone');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+
+  // Use React Query mutation for adding product
+  const addProductMutation = useAddProduct();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,24 +31,18 @@ const AddProduct = () => {
     for (let i = 0; i < files.length; i++) {
       formData.append('images', files[i])
     }
-    try {
-      const token = await getToken()
-      const {data} = await axios.post('/api/product/add', formData,{headers:{Authorization: `Bearer ${token}`}})
 
-      if (data.success){
-        toast.success(data.message)
+    addProductMutation.mutate(formData, {
+      onSuccess: () => {
+        // Reset form
         setFiles([]);
         setName('');
         setDescription('');
         setCategory('Earphone');
         setPrice('');
         setOfferPrice('');
-      }else {
-        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error(error.message)
-    }
+    });
   };
 
   return (
@@ -159,8 +152,8 @@ const AddProduct = () => {
             />
           </div>
         </div>
-        <button type="submit" className="btn-primary px-8">
-          ADD PRODUCT
+        <button type="submit" className="btn-primary px-8" disabled={addProductMutation.isPending}>
+          {addProductMutation.isPending ? 'ADDING...' : 'ADD PRODUCT'}
         </button>
       </form>
       {/* <Footer /> */}
