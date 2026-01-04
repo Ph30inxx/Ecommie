@@ -1,162 +1,192 @@
-'use client'
-import React, { useState } from "react";
-import { assets } from "@/assets/assets";
-import Image from "next/image";
-import { useAddProduct } from "@/lib/react-query/hooks/useProductMutations";
+'use client';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAddProduct } from '@/lib/react-query/hooks/useProductMutations';
+import { basicInfoSchema, pricingSchema, imagesSchema, productFormSchema } from '@/lib/validation/productSchemas';
 
+// Import step components
+import StepIndicator from '@/components/seller/product-form/StepIndicator';
+import BasicInfoStep from '@/components/seller/product-form/BasicInfoStep';
+import PricingStep from '@/components/seller/product-form/PricingStep';
+import ImagesStep from '@/components/seller/product-form/ImagesStep';
+
+const getFieldsForStep = (step) => {
+  switch(step) {
+    case 1: return ['name', 'description', 'category'];
+    case 2: return ['price', 'offerPrice'];
+    case 3: return ['images'];
+    default: return [];
+  }
+};
 
 const AddProduct = () => {
-
-  const [files, setFiles] = useState([]);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Earphone');
-  const [price, setPrice] = useState('');
-  const [offerPrice, setOfferPrice] = useState('');
-
-  // Use React Query mutation for adding product
+  const [currentStep, setCurrentStep] = useState(1);
   const addProductMutation = useAddProduct();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const form = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      description: '',
+      category: 'Earphone',
+      price: '',
+      offerPrice: '',
+      images: []
+    }
+  });
 
-    const formData = new FormData()
+  const { register, handleSubmit, formState: { errors }, trigger, setValue, watch } = form;
 
-    formData.append('name', name)
-    formData.append('description', description)
-    formData.append('category', category)
-    formData.append('price', price)
-    formData.append('offerPrice', offerPrice)
+  const handleNext = async () => {
+    // Get current form values
+    const values = form.getValues();
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append('images', files[i])
+    // Validate current step with appropriate schema
+    let stepSchema;
+    let dataToValidate;
+
+    switch(currentStep) {
+      case 1:
+        stepSchema = basicInfoSchema;
+        dataToValidate = {
+          name: values.name,
+          description: values.description,
+          category: values.category,
+        };
+        break;
+      case 2:
+        stepSchema = pricingSchema;
+        dataToValidate = {
+          price: values.price,
+          offerPrice: values.offerPrice,
+        };
+        break;
+      default:
+        return;
     }
 
-    addProductMutation.mutate(formData, {
-      onSuccess: () => {
-        // Reset form
-        setFiles([]);
-        setName('');
-        setDescription('');
-        setCategory('Earphone');
-        setPrice('');
-        setOfferPrice('');
+    try {
+      // Validate only the fields for this step
+      stepSchema.parse(dataToValidate);
+
+      // Clear any errors for this step
+      const fieldsToValidate = getFieldsForStep(currentStep);
+      fieldsToValidate.forEach(field => form.clearErrors(field));
+
+      // If validation passes, move to next step
+      setCurrentStep(prev => prev + 1);
+    } catch (error) {
+      // Set errors manually for failed validation
+      if (error.errors) {
+        error.errors.forEach((err) => {
+          form.setError(err.path[0], {
+            type: 'manual',
+            message: err.message
+          });
+        });
       }
-    });
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep(prev => prev - 1);
+  };
+
+  const onSubmit = async () => {
+    try {
+      // Get all form values
+      const data = form.getValues();
+
+      // Validate entire form with combined schema before submitting
+      const validatedData = productFormSchema.parse(data);
+
+      // Create FormData for API
+      const formData = new FormData();
+      formData.append('name', validatedData.name);
+      formData.append('description', validatedData.description);
+      formData.append('category', validatedData.category);
+      formData.append('price', validatedData.price.toString());
+      formData.append('offerPrice', validatedData.offerPrice.toString());
+
+      validatedData.images.forEach(file => {
+        formData.append('images', file);
+      });
+
+      addProductMutation.mutate(formData, {
+        onSuccess: () => {
+          form.reset();
+          setCurrentStep(1);
+        }
+      });
+    } catch (error) {
+      console.error('Validation error:', error);
+      // If validation fails, set errors and go back to the first invalid step
+      if (error.errors) {
+        error.errors.forEach((err) => {
+          form.setError(err.path[0], {
+            type: 'manual',
+            message: err.message
+          });
+        });
+
+        const firstError = error.errors[0];
+        if (['name', 'description', 'category'].includes(firstError.path[0])) {
+          setCurrentStep(1);
+        } else if (['price', 'offerPrice'].includes(firstError.path[0])) {
+          setCurrentStep(2);
+        } else if (firstError.path[0] === 'images') {
+          setCurrentStep(3);
+        }
+      }
+    }
   };
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between page-transition">
-      <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <div>
-          <p className="text-base font-semibold text-slate-700">Product Image</p>
-          <div className="flex flex-wrap items-center gap-3 mt-2 p-6 border-2 border-dashed border-slate-300 hover:border-purple-500 transition-colors duration-300 rounded-xl bg-purple-50/30">
+      <div className="md:p-10 p-4">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-2xl font-bold gradient-text mb-6">Add New Product</h1>
 
-            {[...Array(4)].map((_, index) => (
-              <label key={index} htmlFor={`image${index}`}>
-                <input onChange={(e) => {
-                  const updatedFiles = [...files];
-                  updatedFiles[index] = e.target.files[0];
-                  setFiles(updatedFiles);
-                }} type="file" id={`image${index}`} hidden />
-                <Image
-                  key={index}
-                  className="max-w-24 cursor-pointer"
-                  src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </label>
-            ))}
+          <StepIndicator currentStep={currentStep} />
 
-          </div>
+          <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="card-dark p-6 space-y-6">
+            {currentStep === 1 && <BasicInfoStep register={register} errors={errors} />}
+            {currentStep === 2 && <PricingStep register={register} errors={errors} />}
+            {currentStep === 3 && <ImagesStep setValue={setValue} watch={watch} errors={errors} />}
+
+            <div className="flex items-center gap-4 pt-4">
+              {currentStep > 1 && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="px-6 py-3 bg-slate-800 text-slate-100 font-semibold rounded-lg border border-slate-700 hover:bg-slate-700 transition-all duration-300"
+                >
+                  Back
+                </button>
+              )}
+
+              {currentStep < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="btn-primary px-8"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="btn-primary px-8"
+                  disabled={addProductMutation.isPending}
+                >
+                  {addProductMutation.isPending ? 'Adding Product...' : 'Add Product'}
+                </button>
+              )}
+            </div>
+          </form>
         </div>
-        <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-semibold text-slate-700" htmlFor="product-name">
-            Product Name
-          </label>
-          <input
-            id="product-name"
-            type="text"
-            placeholder="Type here"
-            className="input-purple"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            required
-          />
-        </div>
-        <div className="flex flex-col gap-1 max-w-md">
-          <label
-            className="text-base font-semibold text-slate-700"
-            htmlFor="product-description"
-          >
-            Product Description
-          </label>
-          <textarea
-            id="product-description"
-            rows={4}
-            className="input-purple resize-none"
-            placeholder="Type here"
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-            required
-          ></textarea>
-        </div>
-        <div className="flex items-center gap-5 flex-wrap">
-          <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-semibold text-slate-700" htmlFor="category">
-              Category
-            </label>
-            <select
-              id="category"
-              className="input-purple"
-              onChange={(e) => setCategory(e.target.value)}
-              defaultValue={category}
-            >
-              <option value="Earphone">Earphone</option>
-              <option value="Headphone">Headphone</option>
-              <option value="Watch">Watch</option>
-              <option value="Smartphone">Smartphone</option>
-              <option value="Laptop">Laptop</option>
-              <option value="Camera">Camera</option>
-              <option value="Accessories">Accessories</option>
-            </select>
-          </div>
-          <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-semibold text-slate-700" htmlFor="product-price">
-              Product Price
-            </label>
-            <input
-              id="product-price"
-              type="number"
-              placeholder="0"
-              className="input-purple"
-              onChange={(e) => setPrice(e.target.value)}
-              value={price}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-semibold text-slate-700" htmlFor="offer-price">
-              Offer Price
-            </label>
-            <input
-              id="offer-price"
-              type="number"
-              placeholder="0"
-              className="input-purple"
-              onChange={(e) => setOfferPrice(e.target.value)}
-              value={offerPrice}
-              required
-            />
-          </div>
-        </div>
-        <button type="submit" className="btn-primary px-8" disabled={addProductMutation.isPending}>
-          {addProductMutation.isPending ? 'ADDING...' : 'ADD PRODUCT'}
-        </button>
-      </form>
-      {/* <Footer /> */}
+      </div>
     </div>
   );
 };
