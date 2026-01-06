@@ -102,6 +102,27 @@
   .float-animation {
     animation: float 3s ease-in-out infinite;
   }
+
+  /* Red glow for delete buttons */
+  .shadow-glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+
+  /* Fade in and scale animation for modals */
+  .animate-fadeInScale {
+    animation: fadeInScale 0.3s ease-out;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @layer components {

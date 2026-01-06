@@ -1,18 +1,44 @@
 'use client'
-import React from "react";
+import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import { useSellerProducts } from "@/lib/react-query/hooks/useSellerProducts";
+import { useDeleteProduct } from "@/lib/react-query/hooks/useProductMutations";
+import DeleteConfirmModal from "@/components/seller/DeleteConfirmModal";
 
 const ProductList = () => {
 
   const { router } = useAppContext()
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   // Use React Query hook for fetching seller products
   const { data: products = [], isLoading: loading } = useSellerProducts();
+  const deleteProductMutation = useDeleteProduct();
+
+  const handleDeleteClick = (product) => {
+    setProductToDelete(product);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (productToDelete) {
+      deleteProductMutation.mutate(productToDelete._id, {
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          setProductToDelete(null);
+        },
+      });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setProductToDelete(null);
+  };
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between page-transition">
@@ -30,7 +56,7 @@ const ProductList = () => {
                 <th className="px-4 py-4 font-semibold truncate">
                   Price
                 </th>
-                <th className="px-4 py-4 font-semibold truncate max-sm:hidden">Action</th>
+                <th className="px-4 py-4 font-semibold truncate">Actions</th>
               </tr>
             </thead>
             <tbody className="text-sm text-slate-400">
@@ -52,15 +78,35 @@ const ProductList = () => {
                   </td>
                   <td className="px-4 py-3 max-sm:hidden">{product.category}</td>
                   <td className="px-4 py-3 text-slate-200">${product.offerPrice}</td>
-                  <td className="px-4 py-3 max-sm:hidden">
-                    <button onClick={() => router.push(`/product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-md hover:shadow-glow-cyan transition-all duration-300">
-                      <span className="hidden md:block">Visit</span>
-                      <Image
-                        className="h-3.5"
-                        src={assets.redirect_icon}
-                        alt="redirect_icon"
-                      />
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => router.push(`/seller/edit-product/${product._id}`)}
+                        className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-md hover:shadow-glow-cyan transition-all duration-300"
+                        title="Edit Product"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(product)}
+                        className="p-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md hover:shadow-glow-red transition-all duration-300"
+                        title="Delete Product"
+                        disabled={deleteProductMutation.isPending}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => router.push(`/product/${product._id}`)}
+                        className="p-2 bg-slate-700 text-slate-200 rounded-md hover:bg-slate-600 transition-all duration-300"
+                        title="View Product"
+                      >
+                        <Image className="h-4 w-4" src={assets.redirect_icon} alt="view" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -68,6 +114,15 @@ const ProductList = () => {
           </table>
         </div>
       </div>}
+
+      <DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        productName={productToDelete?.name}
+        isDeleting={deleteProductMutation.isPending}
+      />
+
       <Footer />
     </div>
   );
