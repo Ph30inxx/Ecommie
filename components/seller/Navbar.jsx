@@ -9,8 +9,14 @@ const Navbar = () => {
 
   return (
     <div className='glass-dark shadow-dark-xl border-b border-slate-800 flex items-center px-4 md:px-8 py-3 justify-between'>
-      <Image onClick={()=>router.push('/')} className='w-28 lg:w-32 cursor-pointer hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]' src={assets.logo} alt="" />
-      <button className='btn-primary text-xs sm:text-sm shadow-neon-cyan'>Logout</button>
+      {/* <Image onClick={()=>router.push('/')} className='w-28 lg:w-32 cursor-pointer hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]' src={assets.logo} alt="" /> */}
+      <div
+          className="cursor-pointer hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] text-2xl md:text-3xl font-bold text-cyan-400"
+          onClick={() => router.push('/')}
+        >
+          Ecommie
+        </div>
+      {/* <button className='btn-primary text-xs sm:text-sm shadow-neon-cyan'>Logout</button> */}
     </div>
   )
 }

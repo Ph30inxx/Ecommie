@@ -8,7 +8,7 @@ import { Providers } from "@/components/Providers";
 const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500", "600", "700"] })
 
 export const metadata = {
-  title: "QuickCart - GreatStack",
+  title: "Ecommie ",
   description: "E-Commerce with Next.js ",
 };
 

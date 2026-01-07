@@ -13,12 +13,12 @@ const Navbar = () => {
 
   return (
     <nav className="glass-dark sticky top-0 z-50 shadow-dark-xl border-b border-slate-800 flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 text-slate-100 animate-fade-in-down">
-      <Image
-        className="cursor-pointer w-28 md:w-32 hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+      <div
+        className="cursor-pointer hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] text-2xl md:text-3xl font-bold text-cyan-400"
         onClick={() => router.push('/')}
-        src={assets.logo}
-        alt="logo"
-      />
+      >
+        Ecommie
+      </div>
       <div className="flex items-center gap-4 lg:gap-8 max-md:hidden">
         <Link href="/" className="relative text-slate-300 hover:text-cyan-400 transition-colors duration-200 font-medium after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-cyan-400 after:to-blue-500 hover:after:w-full after:transition-all after:duration-300">
           Home
@@ -38,7 +38,7 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden md:flex items-center gap-4 ">
-        <Image className="w-4 h-4 cursor-pointer hover:scale-110 transition-transform duration-200 brightness-200" src={assets.search_icon} alt="search icon" />
+        {/* <Image className="w-4 h-4 cursor-pointer hover:scale-110 transition-transform duration-200 brightness-200" src={assets.search_icon} alt="search icon" /> */}
         {user
         ? <>
         <UserButton >

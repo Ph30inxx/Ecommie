@@ -8,7 +8,13 @@ const Footer = () => {
       <div className="grid-bg">
         <div className="flex flex-col md:flex-row items-start justify-center px-6 md:px-16 lg:px-32 gap-10 py-14 border-b border-slate-900">
           <div className="w-4/5">
-            <Image className="w-28 md:w-32 brightness-0 invert drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]" src={assets.logo} alt="logo" />
+            {/* <Image className="w-28 md:w-32 brightness-0 invert drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]" src={assets.logo} alt="logo" /> */}
+            <div
+              className="cursor-pointer hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] text-2xl md:text-3xl font-bold text-cyan-400"
+              onClick={() => router.push('/')}
+            >
+              Ecommie
+            </div>
             <p className="mt-6 text-sm text-slate-400 leading-relaxed">
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
@@ -42,14 +48,14 @@ const Footer = () => {
               <h2 className="text-lg font-bold gradient-text glow-text mb-5">Get in touch</h2>
               <div className="text-sm space-y-3 text-slate-400">
                 <p className="hover:text-cyan-400 transition-colors duration-200">+1-234-567-890</p>
-                <p className="hover:text-cyan-400 transition-colors duration-200">contact@greatstack.dev</p>
+                <p className="hover:text-cyan-400 transition-colors duration-200">contact@dracula.dev</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       <p className="py-5 text-center text-xs md:text-sm bg-black/50 text-slate-500">
-        Copyright 2025 © GreatStack.dev All Right Reserved.
+        Copyright 2025 © Dracula.dev All Right Reserved.
       </p>
     </footer>
   );
