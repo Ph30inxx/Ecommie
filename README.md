@@ -6,6 +6,16 @@ A modern, full-stack e-commerce platform built with Next.js, featuring a compreh
 
 Ecommie is a feature-rich e-commerce application that enables users to browse and purchase products while providing sellers with powerful tools to manage their inventory and orders. The platform includes user authentication, shopping cart functionality, order management, and an analytics dashboard for sellers.
 
+## Deployed URL
+
+https://ecommie.vercel.app
+If url is not reachable then try with mobile data
+
+## Dummy Credentials
+
+Email: deoreom007@gmail.com
+Password: Omdeore007!
+
 ## Features
 
 ### Customer Features
@@ -78,49 +88,6 @@ Ecommie is a feature-rich e-commerce application that enables users to browse an
    ```bash
    npm install
    ```
-
-3. **Set up environment variables**
-
-   Create a `.env` file in the root directory with the following variables:
-   ```env
-   # Public Environment Variables
-   NEXT_PUBLIC_CURRENCY=$
-
-   # Clerk Authentication
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   CLERK_SECRET_KEY=your_clerk_secret_key
-
-   # MongoDB
-   MONGODB_URI=your_mongodb_connection_string
-
-   # Inngest
-   INNGEST_SIGNING_KEY=your_inngest_signing_key
-   INNGEST_EVENT_KEY=your_inngest_event_key
-
-   # Cloudinary
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   ```
-
-4. **Configure Clerk**
-   - Sign up at [clerk.com](https://clerk.com)
-   - Create a new application
-   - Copy your publishable and secret keys to the `.env` file
-
-5. **Configure MongoDB**
-   - Set up a MongoDB database (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
-   - Copy your connection string to the `.env` file
-
-6. **Configure Cloudinary**
-   - Sign up at [cloudinary.com](https://cloudinary.com)
-   - Get your cloud name, API key, and API secret from the dashboard
-   - Add them to the `.env` file
-
-7. **Configure Inngest**
-   - Sign up at [inngest.com](https://www.inngest.com)
-   - Create a new project
-   - Copy your signing key and event key to the `.env` file
 
 ### Running the Application
 
